@@ -30,16 +30,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "22.22.2"
+          node-version: "22"
           registry-url: https://registry.npmjs.org
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install npm for trusted publishing
-        run: npm install -g npm@11.15.0
       - name: Install dependencies
         run: bun install
       - name: Build contract
         run: bun run build
       - name: Publish to NPM (OIDC Trusted Publishing)
-        run: npm stage publish --provenance --access public
+        run: npx -y npm@11.19.1 stage publish --provenance --access public
