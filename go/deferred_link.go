@@ -13,6 +13,7 @@ const (
 	MatchTypeClipboard       MatchType = "clipboard"
 	MatchTypeAppClip         MatchType = "app_clip"
 	MatchTypeClaim           MatchType = "claim"
+	MatchTypeFingerprint     MatchType = "fingerprint"
 	MatchTypeNone            MatchType = "none"
 )
 

@@ -10,7 +10,22 @@ export type MatchType =
   | "clipboard"
   | "app_clip"
   | "claim"
+  | "fingerprint"
   | "none";
+
+/**
+ * Known SDK analytics event names (Detour-style). Any non-empty string is allowed.
+ */
+export type AnalyticsEventName =
+  | "login"
+  | "search"
+  | "share"
+  | "sign_up"
+  | "sign_out"
+  | "view_item"
+  | "add_to_cart"
+  | "purchase"
+  | (string & {});
 
 /** Optional UTM / campaign attribution on a resolved link. */
 export interface Campaign {
@@ -35,3 +50,41 @@ export interface DeferredLink {
 
 /** Alias used by API / server SDK naming (`POST /v1/resolve` response). */
 export type ResolvePayload = DeferredLink;
+
+/** Gap 1 — short-link expand UX. */
+export type ResolveMode = "await" | "optimistic";
+
+/**
+ * Cascade: per-link → per-app → client SDK → await.
+ */
+export function effectiveResolveMode(
+  link?: ResolveMode | null,
+  app?: ResolveMode | null,
+  client?: ResolveMode | null,
+): ResolveMode {
+  return link ?? app ?? client ?? "await";
+}
+
+/**
+ * Response from POST /v1/links/expand (installed-app short URL → in-app path).
+ * Cascade: linkResolveMode ?? appResolveMode ?? client ?? "await".
+ */
+export interface ExpandResult {
+  linkId: string;
+  code: string;
+  host: string;
+  destinationPath: string;
+  params: Record<string, string>;
+  url: string;
+  linkResolveMode?: ResolveMode | null;
+  appResolveMode?: ResolveMode | null;
+  appExpandTimeoutMs?: number | null;
+}
+
+/** Nav target after expand / path-map. */
+export interface ResolvedNavTarget {
+  href: string;
+  linkId?: string;
+  /** When optimistic: expand may still be running; caller should replace later. */
+  pendingExpand?: boolean;
+}
